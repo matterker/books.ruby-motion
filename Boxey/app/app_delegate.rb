@@ -14,6 +14,16 @@ class AppDelegate
       @add_button.frame.size)
     @window.addSubview(@add_button)
     @add_button.addTarget(self, action:"add_tapped", forControlEvents:UIControlEventTouchUpInside)
+    @remove_button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
+    @remove_button.setTitle("Remove", forState:UIControlStateNormal)
+    @remove_button.sizeToFit
+    @remove_button.frame = CGRect.new(
+      [@add_button.frame.origin.x + @add_button.frame.size.width + 10,
+       @add_button.frame.origin.y],
+       @remove_button.frame.size)
+    @window.addSubview(@remove_button)
+    @remove_button.addTarget(
+      self, action:"remove_tapped", forControlEvents:UIControlEventTouchUpInside)
     true
   end
 
@@ -26,5 +36,30 @@ class AppDelegate
        last_view.frame.origin.y + last_view.frame.size.height + 10],
        last_view.frame.size)
     @window.insertSubview(new_view, atIndex:0)
+  end
+
+  def remove_tapped
+    other_views = @window.subviews.select do |view|
+      not view.is_a? UIButton
+    end
+    @last_view = other_views.last
+
+    if @last_view and other_views.count > 1
+      UIView.animateWithDuration(0.5,
+        animations:lambda {
+          @last_view.alpha = 0
+          @last_view.backgroundColor = UIColor.redColor
+          other_views.each do |view|
+            next if view == @last_view
+            view.frame = CGRect.new(
+              [view.frame.origin.x,
+               view.frame.origin.y - (@last_view.frame.size.height + 10)],
+              view.frame.size)
+          end
+        },
+        completion:lambda { |finished|
+          @last_view.removeFromSuperview
+        })
+    end
   end
 end
