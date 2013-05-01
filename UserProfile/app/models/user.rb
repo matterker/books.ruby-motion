@@ -11,4 +11,31 @@ class User
       end
     end
   end
+
+  def initWithCoder(decoder)
+    self.init
+    PROPERTIES.each do |prop|
+      saved_value = decoder.decodeObjectForKey(prop.to_s)
+      self.send("#{prop}=", saved_value)
+    end
+    self
+  end
+
+  def encodeWithCoder(encoder)
+    PROPERTIES.each do |prop|
+      encoder.encodeObject(self.send(prop), forKey: prop.to_s)
+    end
+  end
+
+  USER_KEY = "user"
+  def save
+    defaults = NSUserDefaults.standardUserDefaults
+    defaults[USER_KEY] = NSKeyedArchiver.archiveDataWithRootObject(self)
+  end
+
+  def self.load
+    defaults = NSUserDefaults.standardUserDefaults
+    data = defaults[USER_KEY]
+    NSKeyedUnarchiver.unarchiveObjectWithData(data) if data
+  end
 end
