@@ -30,7 +30,7 @@ class User
   USER_KEY = "user"
   def save
     defaults = NSUserDefaults.standardUserDefaults
-    defaults[USER_KEY] = NSKeyedArchiver.archiveDataWithRootObject(self)
+    defaults[USER_KEY] = NSKeyedArchiver.archivedDataWithRootObject(self)
   end
 
   def self.load
