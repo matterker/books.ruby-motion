@@ -77,4 +77,15 @@ class AlphabetController < UIViewController
   def tableView(tableView, sectionForSectionIndexTitle: title, atIndex: index)
     sections.index title
   end
+
+  def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+    UITableViewCellEditingStyleDelete
+  end
+
+  def tableView(tableView, commitEditingStyle: editingStyle, forRowAtIndex: indexPath)
+    if editingStyle == UITableViewCellEditingStyleDelete
+      rows_for_section(indexPath.section).delete_at indexPath.row
+      tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimationFade)
+    end
+  end
 end
